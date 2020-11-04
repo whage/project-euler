@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 type ResultPair struct {
@@ -80,7 +81,40 @@ func runSequentially() {
 	fmt.Printf("maxRatio: %f, max: %d\n", maxRatio, max)
 }
 
+func sieveOfEratosthenes(n int) []int {
+	A := make([]bool, n)
+	for idx, _ := range A {
+		A[idx] = true
+	}
+	for i := 2; float64(i) <= math.Sqrt(float64(n)); i++ {
+		if A[i] {
+			for j := i*i; j < n; j += i {
+				A[j] = false
+			}
+		}
+	}
+	results := make([]int,0,n)
+	for idx, _ := range A {
+		if idx == 0 || idx == 1 { continue }
+		if A[idx] {
+			results = append(results, idx)
+		}
+	}
+	return results
+}
+
+func multiplyPrimes() int {
+	primes := sieveOfEratosthenes(200)
+	product := 1
+	for i := 0; product*primes[i] <= 1_000_000; i++ {
+		product *= primes[i]
+		fmt.Println(product)
+	}
+	return product
+}
+
 func main() {
 	//runSequentially()
-	runInParallel()
+	//runInParallel()
+	fmt.Println(multiplyPrimes())
 }
