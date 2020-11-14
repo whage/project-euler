@@ -27,18 +27,18 @@ func myTotient(n int) int {
 // https://cp-algorithms.com/algebra/phi-function.html
 func totientUsingPrimeFactorization(n int) int {
 	result := n
-    for i := 2; i * i <= n; i++ {
-        if n % i == 0 {
-            for n % i == 0 {
-                n /= i
-            }
-            result -= result / i
-        }
-    }
-    if n > 1 {
-        result -= result / n
-    }
-    return result
+	for i := 2; i * i <= n; i++ {
+		if n % i == 0 {
+			for n % i == 0 {
+				n /= i
+			}
+			result -= result / i
+		}
+	}
+	if n > 1 {
+		result -= result / n
+	}
+	return result
 }
 
 func factorial(n int) int {
