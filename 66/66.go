@@ -13,6 +13,11 @@ func isPerfectSquare(n int64) bool {
 	return isWholeNumber(math.Sqrt(float64(n)))
 }
 
+// INCORRECT!
+// OVERFLOWS!
+// for D=61 it prints:
+//                     335159612^2 - 61x42912791^2 = 1
+// But that is 3 not 1!
 func findValueOfD(dMax int64) int64 {
 	var finalD int64
 	var largestX int64 = 3
@@ -22,15 +27,16 @@ func findValueOfD(dMax int64) int64 {
 		if isPerfectSquare(D) { continue; } // assuming no solution exists when D is square
 		var y int64 = 1
 		for {
+			//fmt.Printf("Current D: %d, trying y: %d\n", D, y)
 			var ySquared int64 = y*y
 			if isPerfectSquare(D*ySquared+1) {
-				xMaxCandidate := int64(math.Sqrt(float64(D*ySquared+1)))
-				if xMaxCandidate >= largestX {
-					largestX = xMaxCandidate
+				currentX := int64(math.Sqrt(float64(D*ySquared+1)))
+				if currentX >= largestX {
+					largestX = currentX
 					finalD = D
 					finalY = y
 				}
-				fmt.Printf("%d^2 - %dx%d^2 = 1\n", xMaxCandidate, D, y)
+				fmt.Printf("%d^2 - %dx%d^2 = 1\n", currentX, D, y)
 				break
 			}
 			y++
@@ -42,7 +48,7 @@ func findValueOfD(dMax int64) int64 {
 }
 
 func main() {
-	fmt.Println("final D", findValueOfD(1000))
+	fmt.Println("final D", findValueOfD(106))
 }
 
 // running times
