@@ -37,13 +37,14 @@
 		(filter (constraint-fn selected-values) options)))
 
 (define (solve selected-values current-node-idx remaining-numbers)
-	;(if (and (= current-node-idx 5) (= (length remaining-numbers) 1))
-	(if (= current-node-idx 5)
-		(list-set selected-values current-node-idx (list-ref remaining-numbers 0))
-		(let ([options (filter-options current-node-idx remaining-numbers selected-values)])
-			(if (not (empty? options))
-				(solve (list-set selected-values current-node-idx (car options)) (+ 1 current-node-idx) (remove (car options) remaining-numbers))
-				(list 0 0 0 0 0 0)))))
+	(if (= current-node-idx -1)
+		#f
+		(if (= current-node-idx 5)
+			(list-set selected-values current-node-idx (list-ref remaining-numbers 0))
+			(let ([options (filter-options current-node-idx remaining-numbers selected-values)])
+				(if (not (empty? options))
+					(solve (list-set selected-values current-node-idx (car options)) (+ 1 current-node-idx) (remove (car options) remaining-numbers))
+					(solve (list-set selected-values (- current-node-idx 1) (........))))))))
 
 (trace filter-options)
 (trace solve)
