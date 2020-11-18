@@ -41,14 +41,6 @@ func totientUsingPrimeFactorization(n int) int {
 	return result
 }
 
-func factorial(n int) int {
-	sum := 1
-	for i := 1; i <= n; i++ {
-		sum *= i
-	}
-	return sum
-}
-
 type DigitCount map[int]int
 
 func (a DigitCount) isEqual(b DigitCount) bool {
@@ -68,7 +60,7 @@ func getDigits(x int) DigitCount {
 	return counter
 }
 
-func iterateFactorials(limit int) {
+func iterate(limit int) {
 	var minRatio float64 = 10
 	min := 1
 	for i := 2; i <= limit; i++ {
@@ -90,5 +82,5 @@ func iterateFactorials(limit int) {
 
 func main() {
 	//fmt.Println(getDigits(524).isEqual(getDigits(450)))
-	iterateFactorials(10_000_000)
+	iterate(10000000)
 }
