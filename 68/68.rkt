@@ -38,8 +38,10 @@
 
 (define constraints (list constraint-0 constraint-1 constraint-2 constraint-3 constraint-4 constraint-5))
 
-(define (difference list-a list-b)
-	(set->list (set-subtract (list->set list-a) (list->set list-b))))
+(define (get-remaining list-b)
+	(let ([base (list 1 2 3 4 5 6)])
+		(sort (set->list (set-subtract (list->set base) (list->set list-b))) <)))
+	
 
 (define (filter-options node-idx options selected-values)
 	(let ([constraint-fn (list-ref constraints node-idx)])
@@ -53,8 +55,9 @@
 			(let ([options (filter-options current-node-idx remaining-numbers selected-values)])
 				(if (not (empty? options))
 					(solve (list-set selected-values current-node-idx (car options)) (+ 1 current-node-idx) (remove (car options) remaining-numbers))
-					(solve selected-values (- current-node-idx 1) (difference (list 1 2 3 4 5 6) (take selected-values (+ 1 current-node-idx)))))))))
+					(solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (get-remaining (take selected-values (- current-node-idx 1)))))))))
 
+(trace get-remaining)
 (trace filter-options)
 (trace solve)
 (solve (list 0 0 0 0 0 0) 0 (list 1 2 3 4 5 6))
