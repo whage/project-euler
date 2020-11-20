@@ -68,12 +68,13 @@
                 (let* ([first-available-set (list-ref (all-sets) (first indexes-of-available-sets))]
                        [options (get-available-options (list-ref selected-values (max 0 (- current-node-idx 1))) first-available-set)])
                     (if (empty? options)
-                        (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets)) ; backtrack
-                        (if (= current-node-idx 9)
+                        ;(solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets)) ; backtrack
+                        (solve selected-values current-node-idx (cons (first indexes-of-available-sets) used-sets))
+                        (if (= current-node-idx 5)
                             (list-set selected-values current-node-idx (first options))
                             (solve (list-set selected-values current-node-idx (first options)) (+ 1 current-node-idx) (cons (first indexes-of-available-sets) used-sets)))))))))
 
 (trace solve)
 (trace get-available-sets)
 ;(trace get-available-options)
-(solve (list 0 0 0 0 0 0 0 0 0 0) 0 (list))
+(solve (list 0 0 0 0 0 0) 0 (list))
