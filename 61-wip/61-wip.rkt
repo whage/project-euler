@@ -56,25 +56,24 @@
         options
         (filter (lambda (n) (= (quotient n 100) (modulo current-value 100))) options)))
 
-(define (get-available-sets used-sets)
-    (sort (set->list (set-subtract (list->set (list 0 1 2 3 4 5)) (list->set used-sets))) <))
+(define (get-available-sets used-sets unusable-sets)
+    (sort (set->list (set-subtract (list->set (list 0 1 2 3 4 5)) (list->set used-sets) (list->set unusable-sets))) <))
 
-(define (solve selected-values current-node-idx used-sets)
+(define (solve selected-values current-node-idx used-sets unusable-sets)
     (if (= current-node-idx -1)
         #f
-        (let ([indexes-of-available-sets (get-available-sets used-sets)])
+        (let ([indexes-of-available-sets (get-available-sets used-sets unusable-sets)])
             (if (empty? indexes-of-available-sets)
-                (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets)) ; backtrack
+                (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets) (list)) ; backtrack
                 (let* ([first-available-set (list-ref (all-sets) (first indexes-of-available-sets))]
                        [options (get-available-options (list-ref selected-values (max 0 (- current-node-idx 1))) first-available-set)])
                     (if (empty? options)
-                        ;(solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets)) ; backtrack
-                        (solve selected-values current-node-idx (cons (first indexes-of-available-sets) used-sets))
+                        (solve selected-values current-node-idx used-sets (cons (first indexes-of-available-sets) unusable-sets)) ; try next set for current node
                         (if (= current-node-idx 5)
                             (list-set selected-values current-node-idx (first options))
-                            (solve (list-set selected-values current-node-idx (first options)) (+ 1 current-node-idx) (cons (first indexes-of-available-sets) used-sets)))))))))
+                            (solve (list-set selected-values current-node-idx (first options)) (+ 1 current-node-idx) (cons (first indexes-of-available-sets) used-sets) (list))))))))) ; pick and move on to next node
 
 (trace solve)
 (trace get-available-sets)
 ;(trace get-available-options)
-(solve (list 0 0 0 0 0 0) 0 (list))
+(solve (list 0 0 0 0 0 0) 0 (list) (list))
