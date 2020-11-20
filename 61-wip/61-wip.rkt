@@ -44,28 +44,36 @@
         (four-digit-only (gen heptagonal))
         (four-digit-only (gen octagonal))))
 
-(all-sets)
+(four-digit-only (gen triangle))
+(four-digit-only (gen square))
+(four-digit-only (gen pentagonal))
+(four-digit-only (gen hexagonal))
+(four-digit-only (gen heptagonal))
+(four-digit-only (gen octagonal))
 
-(define (filter-options node-idx options selected-values)
-    ;(let ([constraint-fn (list-ref constraints node-idx)])
-    (let ([constraint-fn constraint-0])
-        (filter (constraint-fn selected-values) options)))
+(define (get-available-options current-value options)
+    (if (= current-value 0)
+        options
+        (filter (lambda (n) (= (quotient n 100) (modulo current-value 100))) options)))
 
-(define constraint-0
-    (lambda (selected-values) ; a function
-        (lambda (candidate) ; that returns a filtering function
-            #t)))
+(define (get-available-sets used-sets)
+    (sort (set->list (set-subtract (list->set (list 0 1 2 3 4 5)) (list->set used-sets))) <))
 
-(define constraints
-    (list
-        constraint-0))
-
-(define (solve selected-values current-node-idx remaining-sets)
+(define (solve selected-values current-node-idx used-sets)
     (if (= current-node-idx -1)
         #f
-        (let ([options (filter-options current-node-idx remaining-sets selected-values)])
-            (if (empty? options)
-                (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (get-remaining (take selected-values (max 0 (- current-node-idx 1)))))
-                (if (= current-node-idx 9)
-                    (list-set selected-values current-node-idx (car options))
-                    (solve (list-set selected-values current-node-idx (car options)) (+ 1 current-node-idx) (remove (car options) remaining-sets)))))))
+        (let ([indexes-of-available-sets (get-available-sets used-sets)])
+            (if (empty? indexes-of-available-sets)
+                (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets)) ; backtrack
+                (let* ([first-available-set (list-ref (all-sets) (first indexes-of-available-sets))]
+                       [options (get-available-options (list-ref selected-values (max 0 (- current-node-idx 1))) first-available-set)])
+                    (if (empty? options)
+                        (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets)) ; backtrack
+                        (if (= current-node-idx 9)
+                            (list-set selected-values current-node-idx (first options))
+                            (solve (list-set selected-values current-node-idx (first options)) (+ 1 current-node-idx) (cons (first indexes-of-available-sets) used-sets)))))))))
+
+(trace solve)
+(trace get-available-sets)
+;(trace get-available-options)
+(solve (list 0 0 0 0 0 0 0 0 0 0) 0 (list))
