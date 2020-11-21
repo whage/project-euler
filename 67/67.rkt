@@ -1,10 +1,12 @@
 #lang racket
 
+; same as `map` but supplies the current index to the callback too
 (define (map-with-index fn lst idx)
     (if (empty? lst)
         empty
         (cons (fn idx) (map-with-index fn (cdr lst) (+ idx 1)))))
 
+; input data
 (define number-triangle
     (list
         (list 59)
@@ -109,9 +111,14 @@
         (list 23 33 44 81 80 92 93 75 94 88 23 61 39 76 22 03 28 94 32 06 49 65 41 34 18 23 08 47 62 60 03 63 33 13 80 52 31 54 73 43 70 26 16 69 57 87 83 31 03 93 70 81 47 95 77 44 29 68 39 51 56 59 63 07 25 70 07 77 43 53 64 03 94 42 95 39 18 01 66 21 16 97 20 50 90 16 70 10 95 69 29 06 25 61 41 26 15 59 63 35)))
 
 
+; applys `max` on the result of the solution
 (define (max-path-sum number-triangle)
     (apply max (max-of-last-line number-triangle)))
 
+; recursive definition of maximum in a triengle:
+; if has only one line:
+;     then it is that line
+;     otherwise it is the maximum of the last 2 lines
 (define (max-of-last-line number-triangle)
     (if (equal? 1 (length number-triangle))
         (first number-triangle)
@@ -119,6 +126,8 @@
             (last number-triangle)
             (max-of-last-line (reverse (cdr (reverse number-triangle)))))))
 
+; defines tha maximum of 2 lines:
+; for each elemenet the larger of the 2 possible paths leading to that element
 (define (max-of-2-lines bottom top)
     (map-with-index (lambda (idx)
         (if (= idx 0)
