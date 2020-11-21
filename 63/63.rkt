@@ -1,16 +1,6 @@
 #lang racket
 
-;(define (get-count-for-constant-base base)
-;    (let ([initial-power 1]
-;          [initial-acc 0])
-;        (define (iterate-power power acc)
-;            (if (>= base 10)
-;                0
-;                (if (>= (digit-count (expt base power)) power)
-;                    (iterate-power (+ 1 power) (+ 1 acc))
-;                    acc)))
-;        (iterate-power initial-power initial-acc)))
-
+; returns number of numbers that when raised to `power` are also of length `power`
 (define (get-count-for-constant-power power)
     (let ([initial-base 1]
           [initial-acc 0])
@@ -22,12 +12,15 @@
                     (iterate-base (+ 1 base) (+ 1 acc)))))
         (iterate-base initial-base initial-acc)))
 
+; returns the number of digits in `n`
 (define (digit-count n)
     (let ([acc 1])
         (if (< n 10)
             acc
             (+ acc (digit-count (/ n 10))))))
 
+; counts all numbers by raising to powers from 1 until the
+; count of numbers for a given power is 0
 (define (get-total)
     (let ([start-count 0]
           [start-power 1])
