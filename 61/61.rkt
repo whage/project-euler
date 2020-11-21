@@ -20,12 +20,14 @@
 (define (octagonal n)
     (* n (- (* 3 n) 2)))
 
+; generates a list of numbers up to `upto` using the given `generator` function
 (define (generate-numbers generator n upto)
     (let ([current (generator n)])
         (if (> current upto)
             (list)
             (append (list current) (generate-numbers generator (+ n 1) upto)))))
 
+; wrapper function for the above
 (define (gen generator)
     (let ([start 1]
           [upto 9999])
@@ -43,31 +45,29 @@
         (four-digit-only (gen heptagonal))
         (four-digit-only (gen octagonal))))
 
-(four-digit-only (gen triangle))
-(four-digit-only (gen square))
-(four-digit-only (gen pentagonal))
-(four-digit-only (gen hexagonal))
-(four-digit-only (gen heptagonal))
-(four-digit-only (gen octagonal))
-
+; returns a list of elements from `list` that are at the given `indexes`
 (define (get-items-at-indexes lst indexes)
     (if (or (empty? lst) (empty? indexes))
         (list)
         (append (list (list-ref lst (first indexes))) (get-items-at-indexes lst (rest indexes)))))
 
+; same as `map` but supplies the current index to the callback too
 (define (map-with-index fn lst idx)
     (if (empty? lst)
         empty
         (cons (fn idx) (map-with-index fn (cdr lst) (+ idx 1)))))
 
+; creates a list of (<group-index> <number>) pairs from each number
 (define (all-options-as-pairs)
     (let ([index-set-pairs (map-with-index (lambda (idx) (cons idx (list-ref (all-sets) idx))) (all-sets) 0)])
         (map (lambda (index-set-pair)
             (map (lambda (number) (cons number (car index-set-pair))) (cdr index-set-pair))) index-set-pairs)))
 
+; sorts pairs based on its <number> part
 (define (sort-option-pairs lists)
     (sort lists (lambda (a b) (<= (car a) (car b)))))
 
+; returns all options that may be chosen as the next step based on the currently selected value and the remaining sets of numbers
 (define (get-available-options selected-values current-node-idx indexes-of-available-sets)
     (let* ([left-number (list-ref selected-values (max 0 (- current-node-idx 1)))]
           [current-number (list-ref selected-values current-node-idx)]
@@ -79,9 +79,11 @@
                 (filter (lambda (p) (and (> (car p) current-number) (= (quotient (car p) 100) (modulo left-number 100)) (= (quotient (first selected-values) 100) (modulo (car p) 100)))) sorted-option-pairs)
                 (filter (lambda (p) (and (> (car p) current-number) (= (quotient (car p) 100) (modulo left-number 100)))) sorted-option-pairs)))))
 
+; returns the sets of numbers that have not yet been used
 (define (get-available-sets used-sets unusable-sets)
     (sort (set->list (set-subtract (list->set (list 0 1 2 3 4 5)) (list->set used-sets) (list->set unusable-sets))) <))
 
+; implements backtracking
 (define (solve selected-values current-node-idx used-sets unusable-sets)
     (if (= current-node-idx -1)
         #f
