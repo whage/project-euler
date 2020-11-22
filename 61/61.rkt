@@ -80,27 +80,21 @@
                 (filter (lambda (p) (and (> (car p) current-number) (= (quotient (car p) 100) (modulo left-number 100)))) sorted-option-pairs)))))
 
 ; returns the sets of numbers that have not yet been used
-(define (get-available-sets used-sets unusable-sets)
-    (sort (set->list (set-subtract (list->set (list 0 1 2 3 4 5)) (list->set used-sets) (list->set unusable-sets))) <))
+(define (get-available-sets used-sets)
+    (sort (set->list (set-subtract (list->set (list 0 1 2 3 4 5)) (list->set used-sets))) <))
 
 ; implements backtracking
-(define (solve selected-values current-node-idx used-sets unusable-sets)
+(define (solve selected-values current-node-idx used-sets)
     (if (= current-node-idx -1)
         #f
-        (let ([indexes-of-available-sets (get-available-sets used-sets unusable-sets)])
-            (if (empty? indexes-of-available-sets)
-                (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets) (list)) ; backtrack
-                (let ([options (get-available-options selected-values current-node-idx indexes-of-available-sets)])
-                    (if (empty? options)
-                        (solve selected-values current-node-idx used-sets (cons (first indexes-of-available-sets) unusable-sets)) ; try next set for current node
-                        (if (= current-node-idx 5)
-                            (list-set selected-values current-node-idx (car (first options)))
-                            (solve (list-set selected-values current-node-idx (car (first options))) (+ 1 current-node-idx) (cons (cdr (first options)) used-sets) (list))))))))) ; pick first move on to next node
+        (let* ([indexes-of-available-sets (get-available-sets used-sets)]
+               [options (get-available-options selected-values current-node-idx indexes-of-available-sets)])
+            (if (empty? options)
+                (solve (list-set selected-values current-node-idx 0) (- current-node-idx 1) (rest used-sets)) ; backtrack
+                (if (= current-node-idx 5)
+                    (list-set selected-values current-node-idx (car (first options)))
+                    (solve (list-set selected-values current-node-idx (car (first options))) (+ 1 current-node-idx) (cons (cdr (first options)) used-sets))))))) ; pick first move on to next node
 
 ;(trace solve)
 ;(trace get-available-sets)
-(apply + (solve (list 0 0 0 0 0 0) 0 (list) (list)))
-
-;(get-items-at-indexes (list 10 20 30 40 50) (list 0 3 4))
-;(all-options-as-pairs (get-items-at-indexes (all-sets) (list 4 5)))
-;(sort-option-pairs (apply append (get-items-at-indexes (all-options-as-pairs) (list 4 5))))
+(apply + (solve (list 0 0 0 0 0 0) 0 (list)))
