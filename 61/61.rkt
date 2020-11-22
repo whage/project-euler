@@ -36,7 +36,7 @@
 (define (four-digit-only numbers)
     (filter (lambda (i) (> i 999)) numbers))
 
-(define (all-sets)
+(define all-sets
     (list
         (four-digit-only (gen triangle))
         (four-digit-only (gen square))
@@ -59,7 +59,7 @@
 
 ; creates a list of (<group-index> <number>) pairs from each number
 (define (all-options-as-pairs)
-    (let ([index-set-pairs (map-with-index (lambda (idx) (cons idx (list-ref (all-sets) idx))) (all-sets) 0)])
+    (let ([index-set-pairs (map-with-index (lambda (idx) (cons idx (list-ref all-sets idx))) all-sets 0)])
         (map (lambda (index-set-pair)
             (map (lambda (number) (cons number (car index-set-pair))) (cdr index-set-pair))) index-set-pairs)))
 
@@ -97,8 +97,8 @@
                             (list-set selected-values current-node-idx (car (first options)))
                             (solve (list-set selected-values current-node-idx (car (first options))) (+ 1 current-node-idx) (cons (cdr (first options)) used-sets) (list))))))))) ; pick first move on to next node
 
-(trace solve)
-(trace get-available-sets)
+;(trace solve)
+;(trace get-available-sets)
 (apply + (solve (list 0 0 0 0 0 0) 0 (list) (list)))
 
 ;(get-items-at-indexes (list 10 20 30 40 50) (list 0 3 4))
