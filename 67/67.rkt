@@ -113,22 +113,22 @@
 
 ; applys `max` on the result of the solution
 (define (max-path-sum number-triangle)
-    (apply max (max-of-last-line number-triangle)))
+    (apply max (max-values-of-last-line number-triangle)))
 
 ; recursive definition of maximum in a triengle:
 ; if has only one line:
 ;     then it is that line
 ;     otherwise it is the maximum of the last 2 lines
-(define (max-of-last-line number-triangle)
+(define (max-values-of-last-line number-triangle)
     (if (equal? 1 (length number-triangle))
         (first number-triangle)
-        (max-of-2-lines
+        (max-values-of-2-neighboring-lines
             (last number-triangle)
-            (max-of-last-line (reverse (cdr (reverse number-triangle)))))))
+            (max-values-of-last-line (reverse (cdr (reverse number-triangle)))))))
 
 ; defines tha maximum of 2 lines:
 ; for each elemenet the larger of the 2 possible paths leading to that element
-(define (max-of-2-lines bottom top)
+(define (max-values-of-2-neighboring-lines bottom top)
     (map-with-index (lambda (idx)
         (if (= idx 0)
             (+ (first top) (first bottom))
